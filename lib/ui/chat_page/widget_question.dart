@@ -1,10 +1,10 @@
-import 'package:dr_zyggy/domain/model/option.dart';
+import 'package:dr_zyggy/domain/model/answer.dart';
 import 'package:dr_zyggy/domain/model/question.dart';
 import 'package:flutter/material.dart';
 
 class WidgetQuestion extends StatefulWidget {
   final Question question;
-  final Function(Question q, Option o) onSelect;
+  final Function(Answer a) onSelect;
 
   const WidgetQuestion(this.question, {super.key, required this.onSelect});
 
@@ -26,17 +26,22 @@ class _WidgetQuestionState extends State<WidgetQuestion> {
         ),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: widget.question.options.map((option) {
+          children: widget.question.symptoms.map((symptom) {
             return GestureDetector(
               onTap: () {
-                widget.onSelect(widget.question, option);
+                widget.onSelect(
+                  Answer(
+                    question: widget.question,
+                    symptom: symptom,
+                  ),
+                );
               },
               child: Card(
                 margin: EdgeInsets.symmetric(vertical: 4.0),
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Text(
-                    option.title,
+                    symptom.symptom,
                     style: TextStyle(fontSize: 16),
                   ),
                 ),

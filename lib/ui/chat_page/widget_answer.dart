@@ -1,10 +1,10 @@
-import 'package:dr_zyggy/domain/model/symptom.dart';
+import 'package:dr_zyggy/domain/model/answer.dart';
 import 'package:flutter/material.dart';
 
-class WidgetSymptom extends StatelessWidget {
-  final Symptom symptom;
+class WidgetAnswer extends StatelessWidget {
+  final Answer answer;
 
-  const WidgetSymptom({super.key, required this.symptom});
+  const WidgetAnswer({super.key, required this.answer});
 
   @override
   Widget build(BuildContext context) {
@@ -20,10 +20,10 @@ class WidgetSymptom extends StatelessWidget {
           child: Column(
             children: [
               Text(
-                symptom.questionTitle,
+                answer.question.title,
                 style: TextStyle(fontSize: 16),
               ),
-              Text(symptom.selectedOption.title)
+              Text(answer.symptom.symptom)
             ],
           ),
         ),

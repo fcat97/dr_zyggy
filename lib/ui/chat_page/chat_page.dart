@@ -1,6 +1,6 @@
 import 'package:dr_zyggy/data/repository/chat_repository.dart';
+import 'package:dr_zyggy/domain/model/answer.dart';
 import 'package:dr_zyggy/domain/model/symptom.dart';
-import 'package:dr_zyggy/domain/model/option.dart';
 import 'package:dr_zyggy/domain/model/question.dart';
 import 'package:dr_zyggy/domain/repository/chat_repository.dart';
 import 'package:dr_zyggy/ui/chat_page/_model.dart';
@@ -18,7 +18,7 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   Question? _question;
-  final List<ChatUiModel> _symptopmOrPrescription = [];
+  final List<ChatUiModel> _answerOrPrescription = [];
   final ScrollController _controller = ScrollController();
   final ChatRepository _repository = ChatRepositoryImpl();
 
@@ -31,37 +31,26 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   String _getPrescriptionId() {
-    List<Symptom> symptoms = [];
-    for (var chat in _symptopmOrPrescription) {
-      if (chat is SymptomUiModel) symptoms.add(chat.symptom);
+    List<Answer> answers = [];
+    for (var chat in _answerOrPrescription) {
+      if (chat is AnswerUiModel) answers.add(chat.answer);
     }
 
-    return symptoms.map((s) => s.selectedOption.id).join('-');
+    return answers.map((a) => a.symptom.id).join('-');
   }
 
-  void _setSymptom(Question q, Option o) {
+  void _setAnswer(Answer a) {
     setState(() {
-      Symptom s = Symptom(
-        questionId: q.id,
-        questionTitle: q.title,
-        selectedOption: o,
-      );
-      _symptopmOrPrescription.add(SymptomUiModel(symptom: s));
+      _answerOrPrescription.add(AnswerUiModel(answer: a));
 
       _scrollToEnd();
     });
 
-    _fetchNextQuestion(q, o);
+    _fetchNextQuestion(a.symptom);
   }
 
-  void _fetchNextQuestion(
-    Question? previousQuestion,
-    Option? selectedOption,
-  ) async {
-    var question = await _repository.getQuestion(
-      previousQuestion,
-      selectedOption,
-    );
+  void _fetchNextQuestion(Symptom? selectedSymptom) async {
+    var question = await _repository.getQuestion(selectedSymptom);
 
     if (question != null) {
       setState(() {
@@ -72,10 +61,8 @@ class _ChatPageState extends State<ChatPage> {
       var prescription = await _repository.getPrescription(id);
       if (prescription != null) {
         setState(() {
-          _symptopmOrPrescription.add(
-            PrescriptionUiModel(
-              prescription: prescription,
-            ),
+          _answerOrPrescription.add(
+            PrescriptionUiModel(prescription: prescription),
           );
 
           _scrollToEnd();
@@ -91,7 +78,7 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     super.initState();
-    _fetchNextQuestion(null, null);
+    _fetchNextQuestion(null);
   }
 
   @override
@@ -106,11 +93,11 @@ class _ChatPageState extends State<ChatPage> {
           Expanded(
             child: ListView.builder(
               controller: _controller,
-              itemCount: _symptopmOrPrescription.length,
+              itemCount: _answerOrPrescription.length,
               itemBuilder: (context, index) {
-                ChatUiModel c = _symptopmOrPrescription[index];
-                if (c is SymptomUiModel) {
-                  return WidgetSymptom(symptom: c.symptom);
+                ChatUiModel c = _answerOrPrescription[index];
+                if (c is AnswerUiModel) {
+                  return WidgetAnswer(answer: c.answer);
                 } else if (c is PrescriptionUiModel) {
                   return WidgetPrescription(prescription: c.prescription);
                 } else {
@@ -120,7 +107,7 @@ class _ChatPageState extends State<ChatPage> {
             ),
           ),
           _question != null
-              ? WidgetQuestion(_question!, onSelect: _setSymptom)
+              ? WidgetQuestion(_question!, onSelect: _setAnswer)
               : Container()
         ],
       ),

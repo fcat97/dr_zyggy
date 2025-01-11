@@ -1,12 +1,12 @@
-import 'package:dr_zyggy/domain/model/symptom.dart';
+import 'package:dr_zyggy/domain/model/answer.dart';
 import 'package:dr_zyggy/domain/model/prescription.dart';
 
 abstract class ChatUiModel {}
 
-class SymptomUiModel extends ChatUiModel {
-  final Symptom symptom;
+class AnswerUiModel extends ChatUiModel {
+  final Answer answer;
 
-  SymptomUiModel({required this.symptom});
+  AnswerUiModel({required this.answer});
 }
 
 class PrescriptionUiModel extends ChatUiModel {
