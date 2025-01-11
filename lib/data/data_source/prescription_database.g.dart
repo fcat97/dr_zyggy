@@ -221,8 +221,8 @@ class $SymptomItemTable extends SymptomItem
       const VerificationMeta('nextQuestionId');
   @override
   late final GeneratedColumn<String> nextQuestionId = GeneratedColumn<String>(
-      'next_question_id', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+      'next_question_id', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns =>
       [id, questionId, symptom, nextQuestionId];
@@ -260,8 +260,6 @@ class $SymptomItemTable extends SymptomItem
           _nextQuestionIdMeta,
           nextQuestionId.isAcceptableOrUnknown(
               data['next_question_id']!, _nextQuestionIdMeta));
-    } else if (isInserting) {
-      context.missing(_nextQuestionIdMeta);
     }
     return context;
   }
@@ -279,7 +277,7 @@ class $SymptomItemTable extends SymptomItem
       symptom: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
       nextQuestionId: attachedDatabase.typeMapping.read(
-          DriftSqlType.string, data['${effectivePrefix}next_question_id'])!,
+          DriftSqlType.string, data['${effectivePrefix}next_question_id']),
     );
   }
 
@@ -293,19 +291,21 @@ class SymptomItemData extends DataClass implements Insertable<SymptomItemData> {
   final String id;
   final String questionId;
   final String symptom;
-  final String nextQuestionId;
+  final String? nextQuestionId;
   const SymptomItemData(
       {required this.id,
       required this.questionId,
       required this.symptom,
-      required this.nextQuestionId});
+      this.nextQuestionId});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
     map['question_id'] = Variable<String>(questionId);
     map['title'] = Variable<String>(symptom);
-    map['next_question_id'] = Variable<String>(nextQuestionId);
+    if (!nullToAbsent || nextQuestionId != null) {
+      map['next_question_id'] = Variable<String>(nextQuestionId);
+    }
     return map;
   }
 
@@ -314,7 +314,9 @@ class SymptomItemData extends DataClass implements Insertable<SymptomItemData> {
       id: Value(id),
       questionId: Value(questionId),
       symptom: Value(symptom),
-      nextQuestionId: Value(nextQuestionId),
+      nextQuestionId: nextQuestionId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(nextQuestionId),
     );
   }
 
@@ -325,7 +327,7 @@ class SymptomItemData extends DataClass implements Insertable<SymptomItemData> {
       id: serializer.fromJson<String>(json['id']),
       questionId: serializer.fromJson<String>(json['questionId']),
       symptom: serializer.fromJson<String>(json['symptom']),
-      nextQuestionId: serializer.fromJson<String>(json['nextQuestionId']),
+      nextQuestionId: serializer.fromJson<String?>(json['nextQuestionId']),
     );
   }
   @override
@@ -335,7 +337,7 @@ class SymptomItemData extends DataClass implements Insertable<SymptomItemData> {
       'id': serializer.toJson<String>(id),
       'questionId': serializer.toJson<String>(questionId),
       'symptom': serializer.toJson<String>(symptom),
-      'nextQuestionId': serializer.toJson<String>(nextQuestionId),
+      'nextQuestionId': serializer.toJson<String?>(nextQuestionId),
     };
   }
 
@@ -343,12 +345,13 @@ class SymptomItemData extends DataClass implements Insertable<SymptomItemData> {
           {String? id,
           String? questionId,
           String? symptom,
-          String? nextQuestionId}) =>
+          Value<String?> nextQuestionId = const Value.absent()}) =>
       SymptomItemData(
         id: id ?? this.id,
         questionId: questionId ?? this.questionId,
         symptom: symptom ?? this.symptom,
-        nextQuestionId: nextQuestionId ?? this.nextQuestionId,
+        nextQuestionId:
+            nextQuestionId.present ? nextQuestionId.value : this.nextQuestionId,
       );
   SymptomItemData copyWithCompanion(SymptomItemCompanion data) {
     return SymptomItemData(
@@ -389,7 +392,7 @@ class SymptomItemCompanion extends UpdateCompanion<SymptomItemData> {
   final Value<String> id;
   final Value<String> questionId;
   final Value<String> symptom;
-  final Value<String> nextQuestionId;
+  final Value<String?> nextQuestionId;
   final Value<int> rowid;
   const SymptomItemCompanion({
     this.id = const Value.absent(),
@@ -402,12 +405,11 @@ class SymptomItemCompanion extends UpdateCompanion<SymptomItemData> {
     required String id,
     required String questionId,
     required String symptom,
-    required String nextQuestionId,
+    this.nextQuestionId = const Value.absent(),
     this.rowid = const Value.absent(),
   })  : id = Value(id),
         questionId = Value(questionId),
-        symptom = Value(symptom),
-        nextQuestionId = Value(nextQuestionId);
+        symptom = Value(symptom);
   static Insertable<SymptomItemData> custom({
     Expression<String>? id,
     Expression<String>? questionId,
@@ -428,7 +430,7 @@ class SymptomItemCompanion extends UpdateCompanion<SymptomItemData> {
       {Value<String>? id,
       Value<String>? questionId,
       Value<String>? symptom,
-      Value<String>? nextQuestionId,
+      Value<String?>? nextQuestionId,
       Value<int>? rowid}) {
     return SymptomItemCompanion(
       id: id ?? this.id,
@@ -823,7 +825,7 @@ typedef $$SymptomItemTableCreateCompanionBuilder = SymptomItemCompanion
   required String id,
   required String questionId,
   required String symptom,
-  required String nextQuestionId,
+  Value<String?> nextQuestionId,
   Value<int> rowid,
 });
 typedef $$SymptomItemTableUpdateCompanionBuilder = SymptomItemCompanion
@@ -831,7 +833,7 @@ typedef $$SymptomItemTableUpdateCompanionBuilder = SymptomItemCompanion
   Value<String> id,
   Value<String> questionId,
   Value<String> symptom,
-  Value<String> nextQuestionId,
+  Value<String?> nextQuestionId,
   Value<int> rowid,
 });
 
@@ -933,7 +935,7 @@ class $$SymptomItemTableTableManager extends RootTableManager<
             Value<String> id = const Value.absent(),
             Value<String> questionId = const Value.absent(),
             Value<String> symptom = const Value.absent(),
-            Value<String> nextQuestionId = const Value.absent(),
+            Value<String?> nextQuestionId = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               SymptomItemCompanion(
@@ -947,7 +949,7 @@ class $$SymptomItemTableTableManager extends RootTableManager<
             required String id,
             required String questionId,
             required String symptom,
-            required String nextQuestionId,
+            Value<String?> nextQuestionId = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               SymptomItemCompanion.insert(

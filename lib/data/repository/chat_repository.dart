@@ -6,18 +6,28 @@ import 'package:dr_zyggy/domain/repository/chat_repository.dart';
 import 'package:drift/drift.dart';
 
 class ChatRepositoryImpl extends ChatRepository {
+  // singleton ----------------------------------------
+  static final ChatRepositoryImpl _instance = ChatRepositoryImpl._internal();
+  ChatRepositoryImpl._internal();
+  factory ChatRepositoryImpl() {
+    return _instance;
+  }
+  // << -----------------------------------------------
+
   final _db = PrescriptionDatabase();
 
   @override
-  Future<Question?> getQuestion(
-    Symptom? symptom,
-  ) async {
+  Future<Question?> getQuestion(Symptom? symptom) async {
     SimpleSelectStatement<$QuestionItemTable, QuestionItemData> query;
     if (symptom == null) {
       query = (_db.questionItem.select()..where((q) => q.id.equals('q1')));
     } else {
-      query = (_db.questionItem.select()
-        ..where((q) => q.id.equals(symptom.nextQuestionId)));
+      if (symptom.nextQuestionId == null) {
+        return null;
+      } else {
+        query = (_db.questionItem.select()
+          ..where((q) => q.id.equals(symptom.nextQuestionId!)));
+      }
     }
 
     final q = await query.getSingleOrNull();
@@ -44,7 +54,9 @@ class ChatRepositoryImpl extends ChatRepository {
     var prescriptions = (_db.select(_db.prescriptionItem)
           ..where((p) => p.id.equals(id)))
         .getSingleOrNull()
-        .then((p) => Prescription(prescription: p?.prescription ?? ""));
+        .then((p) {
+      return p != null ? Prescription(prescription: p.prescription) : null;
+    });
 
     return prescriptions;
   }

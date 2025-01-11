@@ -25,7 +25,8 @@ class SymptomItem extends Table {
   TextColumn get id => text().named('id')();
   TextColumn get questionId => text().named('question_id')();
   TextColumn get symptom => text().named('title')();
-  TextColumn get nextQuestionId => text().named('next_question_id')();
+  TextColumn get nextQuestionId =>
+      text().nullable().named('next_question_id')();
 }
 
 class PrescriptionItem extends Table {

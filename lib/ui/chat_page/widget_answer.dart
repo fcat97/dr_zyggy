@@ -18,12 +18,15 @@ class WidgetAnswer extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
           ),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
                 answer.question.title,
-                style: TextStyle(fontSize: 16),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              Text(answer.symptom.symptom)
+              Text(
+                answer.symptom.symptom,
+              )
             ],
           ),
         ),

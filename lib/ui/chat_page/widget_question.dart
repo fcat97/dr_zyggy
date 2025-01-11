@@ -24,8 +24,9 @@ class _WidgetQuestionState extends State<WidgetQuestion> {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
         ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        Wrap(
+          spacing: 12.0,
+          runSpacing: 8,
           children: widget.question.symptoms.map((symptom) {
             return GestureDetector(
               onTap: () {
@@ -38,6 +39,7 @@ class _WidgetQuestionState extends State<WidgetQuestion> {
               },
               child: Card(
                 margin: EdgeInsets.symmetric(vertical: 4.0),
+                color: Colors.orange[300],
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Text(

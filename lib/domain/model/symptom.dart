@@ -1,7 +1,7 @@
 class Symptom {
   final String id;
   final String questionId;
-  final String nextQuestionId;
+  final String? nextQuestionId;
   final String symptom;
 
   Symptom({

@@ -22,8 +22,8 @@ class _ChatPageState extends State<ChatPage> {
   final ScrollController _controller = ScrollController();
   final ChatRepository _repository = ChatRepositoryImpl();
 
-  void _scrollToEnd() {
-    _controller.animateTo(
+  Future<void> _scrollToEnd() {
+    return _controller.animateTo(
       _controller.position.maxScrollExtent,
       duration: Duration(milliseconds: 300),
       curve: Curves.easeOut,
@@ -39,12 +39,12 @@ class _ChatPageState extends State<ChatPage> {
     return answers.map((a) => a.symptom.id).join('-');
   }
 
-  void _setAnswer(Answer a) {
+  void _setAnswer(Answer a) async {
     setState(() {
       _answerOrPrescription.add(AnswerUiModel(answer: a));
-
-      _scrollToEnd();
     });
+
+    await _scrollToEnd();
 
     _fetchNextQuestion(a.symptom);
   }
@@ -56,6 +56,8 @@ class _ChatPageState extends State<ChatPage> {
       setState(() {
         _question = question;
       });
+
+      await _scrollToEnd();
     } else {
       var id = _getPrescriptionId();
       var prescription = await _repository.getPrescription(id);
@@ -65,13 +67,11 @@ class _ChatPageState extends State<ChatPage> {
             PrescriptionUiModel(prescription: prescription),
           );
 
-          _scrollToEnd();
-        });
-      } else {
-        setState(() {
           _question = null;
         });
       }
+
+      await _scrollToEnd();
     }
   }
 
