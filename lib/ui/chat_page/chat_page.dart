@@ -3,6 +3,7 @@ import 'package:dr_zyggy/domain/model/answer.dart';
 import 'package:dr_zyggy/domain/model/symptom.dart';
 import 'package:dr_zyggy/domain/model/question.dart';
 import 'package:dr_zyggy/domain/repository/chat_repository.dart';
+import 'package:dr_zyggy/main.dart';
 import 'package:dr_zyggy/ui/chat_page/_model.dart';
 import 'package:dr_zyggy/ui/chat_page/widget_answer.dart';
 import 'package:dr_zyggy/ui/chat_page/widget_prescription.dart';
@@ -58,6 +59,7 @@ class _ChatPageState extends State<ChatPage> {
       });
 
       await _scrollToEnd();
+      tts.speak(question.title);
     } else {
       var id = _getPrescriptionId();
       var prescription = await _repository.getPrescription(id);
@@ -69,6 +71,8 @@ class _ChatPageState extends State<ChatPage> {
 
           _question = null;
         });
+
+        tts.speak(prescription.prescription);
       }
 
       await _scrollToEnd();
@@ -79,6 +83,12 @@ class _ChatPageState extends State<ChatPage> {
   void initState() {
     super.initState();
     _fetchNextQuestion(null);
+  }
+
+  @override
+  void dispose() {
+    tts.terminate();
+    super.dispose();
   }
 
   @override

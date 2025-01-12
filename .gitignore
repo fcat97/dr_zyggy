@@ -35,6 +35,9 @@ migrate_working_dir/
 
 # Db Creator 
 /db_creator/.venv
+/tts
+/assets/gtts
+/assets/tts
 
 # Symbolication related
 app.*.symbols

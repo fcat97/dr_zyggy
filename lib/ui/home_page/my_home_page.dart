@@ -1,3 +1,6 @@
+import 'package:dr_zyggy/domain/gtts/gtts.dart';
+import 'package:dr_zyggy/domain/gtts/unzip.dart';
+import 'package:dr_zyggy/main.dart';
 import 'package:dr_zyggy/ui/chat_page/chat_page.dart';
 import 'package:flutter/material.dart';
 
@@ -10,6 +13,27 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  var _isLoading = false;
+
+  Future<void> _getReady() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    tts = Gtts();
+    await tts.init();
+
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getReady();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,7 +41,9 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: Center(),
+      body: Center(
+        child: _isLoading ? CircularProgressIndicator() : Container(),
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => {
           Navigator.of(context).push(

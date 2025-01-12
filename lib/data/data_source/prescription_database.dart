@@ -1,8 +1,8 @@
 import 'dart:io';
 
+import 'package:dr_zyggy/domain/util/copy.dart';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:sqlite3/sqlite3.dart';
@@ -53,19 +53,16 @@ class PrescriptionDatabase extends _$PrescriptionDatabase {
   // https://drift.simonbinder.eu/examples/existing_databases/#extracting-the-database
   static LazyDatabase _openConnection() {
     return LazyDatabase(() async {
-      final dbFolder = await getApplicationDocumentsDirectory();
+      final documentDir = await getApplicationDocumentsDirectory();
+      final appDir = File(p.join(documentDir.path, 'dr_zyggy'));
+      final dbFolder = File(p.join(appDir.path, 'db'));
       final file = File(p.join(dbFolder.path, 'prescriptoin.db'));
+      //await file.parent.create(recursive: true);
 
-      if (!await file.exists()) {
-        final blob = await rootBundle.load('assets/db/prescription.db');
-        final buffer = blob.buffer;
-        await file.writeAsBytes(
-          buffer.asUint8List(
-            blob.offsetInBytes,
-            blob.lengthInBytes,
-          ),
-        );
-      }
+      await copyAssetsToDocument(
+        'assets/db/prescription.db',
+        'dr_zyggy/db/prescriptoin.db',
+      );
 
       // Also work around limitations on old Android versions
       if (Platform.isAndroid) {

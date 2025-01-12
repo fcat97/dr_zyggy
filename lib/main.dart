@@ -1,7 +1,10 @@
+import 'package:dr_zyggy/domain/gtts/gtts.dart';
 import 'package:dr_zyggy/ui/home_page/my_home_page.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+late Gtts tts;
+
+void main() async {
   runApp(const MyApp());
 }
 
