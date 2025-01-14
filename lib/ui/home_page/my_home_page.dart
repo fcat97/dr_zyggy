@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:dr_zyggy/domain/gtts/gtts.dart';
 import 'package:dr_zyggy/main.dart';
 import 'package:dr_zyggy/ui/chat_page/chat_page.dart';
@@ -19,8 +20,10 @@ class _MyHomePageState extends State<MyHomePage> {
       _isLoading = true;
     });
 
-    tts = Gtts();
-    await tts.init();
+    if (!kIsWeb) {
+      tts = Gtts();
+      await tts.init();
+    }
 
     setState(() {
       _isLoading = false;

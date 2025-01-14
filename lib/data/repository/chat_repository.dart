@@ -1,4 +1,5 @@
 import 'package:dr_zyggy/data/data_source/prescription_database.dart';
+import 'package:dr_zyggy/data/data_source/shared.dart';
 import 'package:dr_zyggy/domain/model/prescription.dart';
 import 'package:dr_zyggy/domain/model/question.dart';
 import 'package:dr_zyggy/domain/model/symptom.dart';
@@ -14,7 +15,7 @@ class ChatRepositoryImpl extends ChatRepository {
   }
   // << -----------------------------------------------
 
-  final _db = PrescriptionDatabase();
+  final _db = constructDb();
 
   @override
   Future<Question?> getQuestion(Symptom? symptom) async {
