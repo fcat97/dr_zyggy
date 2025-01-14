@@ -59,7 +59,7 @@ class _ChatPageState extends State<ChatPage> {
       });
 
       await _scrollToEnd();
-      //tts.speak(question.title);
+      tts.speak(question.title);
     } else {
       var id = _getPrescriptionId();
       var prescription = await _repository.getPrescription(id);

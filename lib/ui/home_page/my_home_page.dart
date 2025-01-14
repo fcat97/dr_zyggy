@@ -1,5 +1,9 @@
+import 'dart:io';
+
+import 'package:dr_zyggy/domain/tts/flutter_tts.dart';
+import 'package:dr_zyggy/domain/tts/web_tts.dart';
 import 'package:flutter/foundation.dart';
-import 'package:dr_zyggy/domain/gtts/gtts.dart';
+import 'package:dr_zyggy/domain/tts/gtts.dart';
 import 'package:dr_zyggy/main.dart';
 import 'package:dr_zyggy/ui/chat_page/chat_page.dart';
 import 'package:flutter/material.dart';
@@ -20,10 +24,12 @@ class _MyHomePageState extends State<MyHomePage> {
       _isLoading = true;
     });
 
-    if (!kIsWeb) {
+    if (!kIsWeb && Platform.isLinux) {
       tts = Gtts();
-      await tts.init();
+    } else {
+      tts = FlutterTtsWrapper();
     }
+    await tts.init();
 
     setState(() {
       _isLoading = false;

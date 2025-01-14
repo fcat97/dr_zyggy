@@ -1,12 +1,13 @@
 import 'dart:io';
 
-import 'package:dr_zyggy/domain/gtts/unzip.dart';
+import 'package:dr_zyggy/domain/util/unzip.dart';
+import 'package:dr_zyggy/domain/tts/tts.dart';
 import 'package:dr_zyggy/domain/util/copy.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
-class Gtts {
+class Gtts extends Tts {
   // singleton ----------------------------------------
   static final Gtts _instance = Gtts._internal();
   Gtts._internal();
@@ -15,6 +16,7 @@ class Gtts {
   }
   // << -----------------------------------------------
 
+  @override
   Future<void> init() async {
     await _unzipTtsFile();
 
@@ -28,6 +30,8 @@ class Gtts {
 
   Process? _process;
   final List<int> _pidList = [];
+
+  @override
   Future<void> speak(String text) async {
     final scriptDir = await _getScriptDir();
     final scriptPath = await _getScriptPath();
@@ -53,6 +57,7 @@ class Gtts {
     }
   }
 
+  @override
   Future<void> terminate() async {
     for (var pid in _pidList) {
       Process.killPid(pid);
