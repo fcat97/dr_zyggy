@@ -8,8 +8,8 @@ class FlutterTtsWrapper extends Tts {
   @override
   Future<void> init() async {
     tts = FlutterTts();
-    debugPrint("is bn available ${await tts.isLanguageAvailable('bn')}");
-    await tts.setLanguage('bn');
+    debugPrint("is bn available ${await tts.isLanguageAvailable('hi')}");
+    await tts.setLanguage('hi');
   }
 
   @override

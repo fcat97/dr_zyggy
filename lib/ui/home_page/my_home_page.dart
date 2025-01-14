@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dr_zyggy/domain/tts/flutter_tts.dart';
+import 'package:dr_zyggy/domain/tts/web_tts.dart';
 import 'package:flutter/foundation.dart';
 import 'package:dr_zyggy/domain/tts/gtts.dart';
 import 'package:dr_zyggy/main.dart';
@@ -48,9 +49,12 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: Center(
-        child: _isLoading ? CircularProgressIndicator() : Container(),
-      ),
+      body: _isLoading
+          ? Container(
+              color: Colors.amber,
+              child: Center(child: CircularProgressIndicator()),
+            )
+          : Center(child: _body()),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => {
           Navigator.of(context).push(
@@ -63,4 +67,65 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
+
+  Widget _body() {
+    return Container(
+      color: Colors.amber,
+      alignment: Alignment.center,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              card(
+                Icons.face_2_outlined,
+                "Chat",
+                () => {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => ChatPage()),
+                  )
+                },
+              ),
+              SizedBox(width: 4.0),
+              card(Icons.file_download_done_outlined, "Prescription", () => {}),
+            ],
+          ),
+          SizedBox(height: 4.0),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              card(Icons.settings_outlined, "Settings", () => {}),
+              SizedBox(width: 4.0),
+              card(Icons.help_center_outlined, "About", () => {}),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+Widget card(IconData icon, String label, Function onClick) {
+  return GestureDetector(
+    onTap: () => {onClick()},
+    child: SizedBox(
+      width: 200,
+      height: 200,
+      child: Card(
+        color: Colors.blueAccent[100],
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Icon(icon),
+            Text(
+              label,
+              style: TextStyle(color: Colors.white),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
 }

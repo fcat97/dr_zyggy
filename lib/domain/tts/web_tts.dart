@@ -13,6 +13,7 @@ class WebTts extends Tts {
     if (html.window.speechSynthesis != null) {
       // Create a new SpeechSynthesisUtterance instance
       final speech = html.SpeechSynthesisUtterance(text);
+      speech.lang = "hi";
 
       // Optionally set properties for the speech (like pitch and rate)
       speech.pitch = 1.0; // normal pitch
