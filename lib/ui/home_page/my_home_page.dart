@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dr_zyggy/domain/tts/flutter_tts.dart';
+import 'package:dr_zyggy/domain/tts/web_tts.dart';
 import 'package:flutter/foundation.dart';
 import 'package:dr_zyggy/domain/tts/gtts.dart';
 import 'package:dr_zyggy/main.dart';
@@ -23,12 +24,19 @@ class _MyHomePageState extends State<MyHomePage> {
       _isLoading = true;
     });
 
-    if (!kIsWeb && Platform.isLinux) {
-      tts = Gtts();
-    } else {
-      tts = FlutterTtsWrapper();
+    try{
+      if (!kIsWeb && Platform.isLinux) {
+        tts = Gtts();
+      } else if (kIsWeb) {
+        tts = WebTts();
+      } else {
+        tts = FlutterTtsWrapper();
+      }
+      await tts.init();
+    } catch(e) {
+      debugPrint("$e");
     }
-    await tts.init();
+    
 
     setState(() {
       _isLoading = false;
@@ -44,10 +52,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
       body: _isLoading
           ? Container(
               color: Colors.amber,
